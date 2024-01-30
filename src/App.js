@@ -134,6 +134,48 @@ function refreshPage() {
   window.location.reload(false);
 }
 
+const [formData, setFormData] = useState({ title: '', year: '' });
+const [userData, setUserData] = useState([]);
+
+const handleInputChange = (e) => {
+  setFormData({ ...formData, [e.target.name]: e.target.value });
+};
+
+const handleSave = () => {
+  const newData = [...userData, formData];
+  setUserData(newData);
+
+  // Clear form inputs
+  setFormData({ title: '', year: '' });
+
+  // Convert newData to JSON and create a Blob
+  const jsonData = JSON.stringify(newData.slice(-1), null, 2);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+
+  // Create a download link
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = 'savedData.json';
+  downloadLink.click();
+};
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+
+  // Read the contents of the selected file
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const fileData = JSON.parse(event.target.result);
+      setFormData(...fileData);
+    } catch (error) {
+      console.error('Error parsing JSON file:', error);
+    }
+  };
+  reader.readAsText(file);
+};
+
+
 useEffect(() => {
   fetchData();
 }, []);
@@ -187,6 +229,25 @@ useEffect(() => {
       <>
        <button onClick={refreshPage}>Refresh Page</button>
       </>
+      <h2>Add New Data:</h2>
+      <form>
+        <label>
+          Title:
+          <input type="text" name="title" value={formData.title} onChange={handleInputChange} />
+        </label>
+        <br />
+        <label>
+          Year:
+          <input type="text" name="year" value={formData.year} onChange={handleInputChange} />
+        </label>
+        <br />
+        <button type="button" onClick={handleSave}>
+          Save
+        </button>
+      </form>
+      <h2>Load Data from JSON File:</h2>
+      <input type="file" accept=".json" onChange={handleFileChange} />
+      <pre>{JSON.stringify(userData, null, 2)}</pre>
       <h1>Data from API:</h1>
       <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
     </div>
