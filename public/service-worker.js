@@ -7,10 +7,7 @@ self.addEventListener('install', (event) => {
       return cache.addAll([
         '/',
         '/index.html',
-        '/static/css/main.css',
-        '/static/js/main.js',
         '/manifest.json',
-        '/static/js/bundle.js',
       ]);
     })
   );
