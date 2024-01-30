@@ -3,7 +3,7 @@ import './App.css';
 import {useState, useEffect} from 'react';
 import React from 'react';
 import { useTable, useFilters, usePagination } from 'react-table';
-import { Document, Page, Text, View, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 
 function App() {
   const data = React.useMemo(() =>
@@ -189,6 +189,17 @@ const styles = StyleSheet.create({
   },
 });
 
+const MyDoc = () => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <View style={styles.section}>
+        <Text>Title: {formData.title}</Text>
+        <Text>Year: {formData.year}</Text>
+      </View>
+    </Page>
+  </Document>
+);
+
 
 useEffect(() => {
   fetchData();
@@ -262,17 +273,18 @@ useEffect(() => {
       <h2>Load Data from JSON File:</h2>
       <input type="file" accept=".json" onChange={handleFileChange} />
       <pre>{JSON.stringify(userData, null, 2)}</pre>
+      <h2>PDF download:</h2>
+      <PDFDownloadLink document={<MyDoc />} fileName="pwa.pdf">
+      <br />
       <h2>Generate PDF:</h2>
       <PDFViewer width="600" height="400">
-        <Document>
-          <Page size="A4" style={styles.page}>
-            <View style={styles.section}>
-              <Text>Title: {formData.title}</Text>
-              <Text>Year: {formData.year}</Text>
-            </View>
-          </Page>
-        </Document>
+        <MyDoc />
       </PDFViewer>
+
+      {({ blob, url, loading, error }) =>
+        loading ? 'Loading document...' : 'Download PDF file'
+      }
+    </PDFDownloadLink>
       <h1>Data from API:</h1>
       <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
     </div>
