@@ -130,6 +130,9 @@ function App() {
   }
 };
 
+function refreshPage() {
+  window.location.reload(false);
+}
 
 useEffect(() => {
   fetchData();
@@ -181,6 +184,9 @@ useEffect(() => {
      <div>
       {/* Display the fetched or cached data in your UI */}
       <h1>service worker</h1>
+      <>
+       <button onClick={refreshPage}>Refresh Page</button>
+      </>
       <h1>Data from API:</h1>
       <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
     </div>
