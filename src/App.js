@@ -229,33 +229,33 @@ useEffect(() => {
 
   return (
     <div>
-          <table {...getTableProps()}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th
-                {...column.getHeaderProps()}>{column.render('Header')}
-                <div>{column.canFilter ? column.render('Filter') : null}</div>
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {page.map(row => {
-          prepareRow(row)
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-              })}
+      <table {...getTableProps()}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <th
+                  {...column.getHeaderProps()}>{column.render('Header')}
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                </th>
+              ))}
             </tr>
-          )
-        })}
-      </tbody>
-    </table>
-           <div>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map(row => {
+            prepareRow(row)
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map(cell => {
+                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                })}
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+      <div>
        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
          Previous Page
        </button>
@@ -269,57 +269,57 @@ useEffect(() => {
          </em>
        </div>
      </div>
-     <div>
-     <div>
-      {/* Display the fetched or cached data in your UI */}
-      <h1>service worker</h1>
-      <>
-       <button onClick={refreshPage}>Refresh Page</button>
-      </>
-      <h2>Add New Data:</h2>
-      <form>
-        <label>
-          Title:
-          <input type="text" name="title" value={formData.title} onChange={handleInputChange} />
-        </label>
+      <div>
+       <div>
+        {/* Display the fetched or cached data in your UI */}
+        <h1>service worker</h1>
+        <>
+         <button onClick={refreshPage}>Refresh Page</button>
+        </>
+        <h2>Add New Data:</h2>
+        <form>
+          <label>
+            Title:
+            <input type="text" name="title" value={formData.title} onChange={handleInputChange} />
+          </label>
+          <br />
+          <label>
+            Year:
+            <input type="text" name="year" value={formData.year} onChange={handleInputChange} />
+          </label>
+          <br />
+          <button type="button" onClick={handleSave}>
+            Save
+          </button>
+        </form>
+        <h2>Load Data from JSON File:</h2>
+        <input type="file" accept=".json" onChange={handleFileChange} />
+        <pre>{JSON.stringify(userData, null, 2)}</pre>
+        <h2>PDF download:</h2>
+        <PDFDownloadLink document={<MyDoc />} fileName="pwa.pdf">
+          {({ blob, url, loading, error }) =>
+            loading ? 'Loading document...' : 'Download PDF file'
+          }
+        </PDFDownloadLink>
         <br />
-        <label>
-          Year:
-          <input type="text" name="year" value={formData.year} onChange={handleInputChange} />
-        </label>
-        <br />
-        <button type="button" onClick={handleSave}>
-          Save
-        </button>
-      </form>
-      <h2>Load Data from JSON File:</h2>
-      <input type="file" accept=".json" onChange={handleFileChange} />
-      <pre>{JSON.stringify(userData, null, 2)}</pre>
-      <h2>PDF download:</h2>
-      <PDFDownloadLink document={<MyDoc />} fileName="pwa.pdf">
-        {({ blob, url, loading, error }) =>
-          loading ? 'Loading document...' : 'Download PDF file'
-        }
-      </PDFDownloadLink>
-      <br />
-      <h2>Generate PDF:</h2>
-      <BlobProvider document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>}>
-        {({ blob, url, loading, error }) => (
-          <PDFDownloadLink document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>} fileName="document.pdf">
-            {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-          </PDFDownloadLink>
-        )}
-      </BlobProvider>
-      <h2>Generate PDF:</h2>
-      {/* <PDFViewer width="600" height="400">
-        <MyDoc />
-      </PDFViewer> */}
-      <h1>Data from API:</h1>
-      <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
+        <h2>Generate PDF:</h2>
+        <BlobProvider document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>}>
+          {({ blob, url, loading, error }) => (
+            <PDFDownloadLink document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>} fileName="document.pdf">
+              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+            </PDFDownloadLink>
+          )}
+        </BlobProvider>
+        <h2>Generate PDF:</h2>
+        {/* <PDFViewer width="600" height="400">
+          <MyDoc />
+        </PDFViewer> */}
+        <h1>Data from API:</h1>
+        <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
+       </div>
+      </div>
     </div>
-    </div>
-    </div>
-   );
+  );
 }
 
 export default App;
