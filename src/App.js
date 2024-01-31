@@ -3,7 +3,7 @@ import './App.css';
 import {useState, useEffect} from 'react';
 import React from 'react';
 import { useTable, useFilters, usePagination } from 'react-table';
-import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Font, pdf, BlobProvider } from '@react-pdf/renderer';
 
 function App() {
   const data = React.useMemo(() =>
@@ -176,11 +176,33 @@ const handleFileChange = (e) => {
   reader.readAsText(file);
 };
 
+const downloadFile = (blob, fileName) => {
+  const link = document.createElement('a');
+  // create a blobURI pointing to our Blob
+  console.log('blob', blob)
+  console.log('fileName', fileName)
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  // some browser needs the anchor to be in the doc
+  document.body.append(link);
+  link.click();
+  link.remove();
+  // in case the Blob uses a lot of memory
+  setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+};
+
+Font.register({
+  family: "Roboto",
+  src:
+    "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf"
+});
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
     padding: 10,
+    fontFamily: "Roboto",
   },
   section: {
     margin: 10,
@@ -275,16 +297,23 @@ useEffect(() => {
       <pre>{JSON.stringify(userData, null, 2)}</pre>
       <h2>PDF download:</h2>
       <PDFDownloadLink document={<MyDoc />} fileName="pwa.pdf">
+        {({ blob, url, loading, error }) =>
+          loading ? 'Loading document...' : 'Download PDF file'
+        }
+      </PDFDownloadLink>
       <br />
       <h2>Generate PDF:</h2>
-      <PDFViewer width="600" height="400">
+      <BlobProvider document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>}>
+        {({ blob, url, loading, error }) => (
+          <PDFDownloadLink document={<Document font="Roboto"><Page size="A4" style={styles.page}><View style={styles.section}><Text>Title: {formData.title}</Text><Text>Body: {formData.body}</Text></View></Page></Document>} fileName="document.pdf">
+            {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+          </PDFDownloadLink>
+        )}
+      </BlobProvider>
+      <h2>Generate PDF:</h2>
+      {/* <PDFViewer width="600" height="400">
         <MyDoc />
-      </PDFViewer>
-
-      {({ blob, url, loading, error }) =>
-        loading ? 'Loading document...' : 'Download PDF file'
-      }
-    </PDFDownloadLink>
+      </PDFViewer> */}
       <h1>Data from API:</h1>
       <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
     </div>
